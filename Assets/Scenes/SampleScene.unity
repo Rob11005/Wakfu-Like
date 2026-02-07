@@ -131,6 +131,8 @@ GameObject:
   - component: {fileID: 45146101}
   - component: {fileID: 45146100}
   - component: {fileID: 45146099}
+  - component: {fileID: 45146103}
+  - component: {fileID: 45146104}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -227,6 +229,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &45146103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 45146098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d8a48d19bb4da04d9272a49522a23fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stat: {fileID: 11400000, guid: e729b71522269ee46aa36da22fc60388, type: 2}
+  turn: 0
+--- !u!114 &45146104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 45146098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2a6f550d3254364f9ae7eec2c69281d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 117238867}
 --- !u!114 &117238867 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8422174124475330616, guid: 5828838e2a10d6e42854d494ffa14bde, type: 3}
@@ -723,6 +752,7 @@ GameObject:
   - component: {fileID: 565036678}
   - component: {fileID: 565036679}
   - component: {fileID: 565036680}
+  - component: {fileID: 565036681}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -758,6 +788,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 117238867}
+  enemy_Cac: {fileID: 45146103}
   turnText: {fileID: 454517231}
   hpText: {fileID: 472119789}
 --- !u!114 &565036680
@@ -770,6 +801,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 682258c7c7bcc414a95310be9a19b2a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &565036681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565036676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb0ef2611ed63b844b35930088bb2cee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   groundTilemap: {fileID: 2074958367}

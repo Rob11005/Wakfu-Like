@@ -4,6 +4,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public Player player;
+    public Enemy_Cac enemy_Cac;
     private int turnCount;
     public TextMeshProUGUI turnText;
     public TextMeshProUGUI hpText;
@@ -17,6 +18,6 @@ public class GameManager : MonoBehaviour
     {
         player.pmPlayer = player.maxPM_player;
         turnCount++;
-        //Faire jouer les ennemis
+        enemy_Cac.turn = true;
     }
 }

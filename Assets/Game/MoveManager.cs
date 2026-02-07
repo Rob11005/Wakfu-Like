@@ -4,18 +4,25 @@ using UnityEngine.Tilemaps;
 public class MoveManager : MonoBehaviour
 {
     #region Singleton
-    private static MoveManager _instance = new MoveManager();
+    private static MoveManager _instance = null;
 
-    public static MoveManager Instance
+    public static MoveManager Instance => _instance;
+
+    public void Awake()
     {
-        get
+        if (_instance != null && _instance != this)
         {
-            return _instance;
+            Destroy(this.gameObject);
+            return;
+        }
+        else
+        {
+            _instance = this;
         }
     }
+
     #endregion
-    public Tilemap groundTilemap;
-    public Tilemap obstacleTilemap;
+
 
     public List<Vector3Int> GenerateManhattanPath(Vector3Int start, Vector3Int target)
     {
@@ -47,10 +54,10 @@ public class MoveManager : MonoBehaviour
 
     public bool IsCellWalkable(Vector3Int cell)
     {
-        if (!groundTilemap.HasTile(cell))
+        if (!GridManager.Instance.groundTilemap.HasTile(cell))
             return false;
 
-        if (obstacleTilemap != null && obstacleTilemap.HasTile(cell))
+        if (GridManager.Instance.obstacleTilemap != null && GridManager.Instance.obstacleTilemap.HasTile(cell))
             return false;
 
         return true;

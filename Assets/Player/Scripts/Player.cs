@@ -3,7 +3,20 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private static Player _instance = new Player();
+    private static Player _instance = null;
+    public static Player Instance => _instance;
+    void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        else
+        {
+            _instance = this;
+        }
+    }
     public int pmPlayer;
     public int maxPM_player = 6;
     public int initiative;
@@ -14,13 +27,5 @@ public class Player : MonoBehaviour
     {
         pmPlayer = maxPM_player;
         hpPlayer = maxHP_player;
-    }
-
-    public static Player Instance
-    {
-        get
-        {
-            return _instance;
-        }
     }
 }

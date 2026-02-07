@@ -39,7 +39,7 @@ public class MoveToClick : MonoBehaviour
             {
                 Destroy(pathGOs[i]);
             }
-            selectedCell = grid.groundTilemap.WorldToCell(hit.point);
+            selectedCell = GridManager.Instance.groundTilemap.WorldToCell(hit.point);
             List<Vector3Int> path = moveManager.GenerateManhattanPath(grid.groundTilemap.WorldToCell(transform.position), selectedCell);
                 if (path.Count == 0)
                     return;

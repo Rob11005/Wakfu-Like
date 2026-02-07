@@ -1,15 +1,18 @@
 using UnityEngine;
 
-public class Enemy_Cac : EnemyTurn
+public class Enemy_Cac : MonoBehaviour
 {
     public EnemyStat stat;
+    EnemyTurn enemyTurn;
     public bool turn;
     GridManager grid;
 
-
-    void Awake()
+    void Start()
     {
         grid = GridManager.Instance;
+        enemyTurn = EnemyTurn.Instance;
+        if (enemyTurn == null)
+            Debug.LogError("EnemyTurn.Instance est NULL");
     }
     void Update()
     {
@@ -17,7 +20,7 @@ public class Enemy_Cac : EnemyTurn
         {
             Vector3Int startPos = grid.groundTilemap.WorldToCell(transform.position);
             Vector3Int targetPos = grid.groundTilemap.WorldToCell(Player.Instance.transform.position);
-            TurnManager(startPos, targetPos, stat.actionRange);
+            enemyTurn.TurnManager(startPos, targetPos, stat);
         }
     }
 }

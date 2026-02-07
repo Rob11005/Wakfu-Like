@@ -6,13 +6,18 @@ public class GridManager : MonoBehaviour
     public Tilemap groundTilemap;
     public Tilemap obstacleTilemap;
 
-    private static GridManager _instance = new GridManager();
-
-    public static GridManager Instance
+    private static GridManager instance = null;
+    public static GridManager Instance => instance;
+    private void Awake()
     {
-        get
+        if (instance != null && instance != this)
         {
-            return _instance;
+            Destroy(this.gameObject);
+            return;
+        }
+        else
+        {
+            instance = this;
         }
     }
 }
