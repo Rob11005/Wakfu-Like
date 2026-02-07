@@ -7718,9 +7718,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 286365565580972723, guid: 5828838e2a10d6e42854d494ffa14bde, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3653787684545545742, guid: 5828838e2a10d6e42854d494ffa14bde, type: 3}
       propertyPath: m_Name
-      value: Capsule
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 3696775067221190280, guid: 5828838e2a10d6e42854d494ffa14bde, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4691899186960693674, guid: 5828838e2a10d6e42854d494ffa14bde, type: 3}
       propertyPath: ghostY

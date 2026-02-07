@@ -4,17 +4,15 @@ using UnityEngine.Tilemaps;
 public class GridManager : MonoBehaviour
 {
     public Tilemap groundTilemap;
+    public Tilemap obstacleTilemap;
 
-    void Update()
+    private static GridManager _instance = new GridManager();
+
+    public static GridManager Instance
     {
-        if(Input.GetMouseButtonDown(0))
+        get
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if(Physics.Raycast(ray, out RaycastHit hit))
-            {
-                Vector3Int cell = groundTilemap.WorldToCell(hit.point);
-            }
+            return _instance;
         }
     }
-
 }

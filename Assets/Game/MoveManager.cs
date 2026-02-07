@@ -3,6 +3,17 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 public class MoveManager : MonoBehaviour
 {
+    #region Singleton
+    private static MoveManager _instance = new MoveManager();
+
+    public static MoveManager Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+    #endregion
     public Tilemap groundTilemap;
     public Tilemap obstacleTilemap;
 

@@ -10,9 +10,8 @@ public class MoveToClick : MonoBehaviour
 {
     [SerializeField] private GameObject redGhost;
     [SerializeField] private GameObject greenGhost;
-    public MoveManager moveManager;
-    public Tilemap groundTilemap;
-    public Tilemap obstacleTilemap;
+    private MoveManager moveManager;
+    private GridManager grid;
     public float moveSpeed = 5f;
     List<GameObject> pathGOs = new List<GameObject>();
     private Queue<Vector3> pathWorldPositions = new Queue<Vector3>();
@@ -26,7 +25,9 @@ public class MoveToClick : MonoBehaviour
 
     void Start()
     {
-        player = GetComponent<Player>();   
+        player = GetComponent<Player>(); 
+        grid = GridManager.Instance;
+        moveManager = MoveManager.Instance; 
     }
     void Update()
     {
@@ -38,8 +39,8 @@ public class MoveToClick : MonoBehaviour
             {
                 Destroy(pathGOs[i]);
             }
-            selectedCell = groundTilemap.WorldToCell(hit.point);
-            List<Vector3Int> path = moveManager.GenerateManhattanPath(groundTilemap.WorldToCell(transform.position), selectedCell);
+            selectedCell = grid.groundTilemap.WorldToCell(hit.point);
+            List<Vector3Int> path = moveManager.GenerateManhattanPath(grid.groundTilemap.WorldToCell(transform.position), selectedCell);
                 if (path.Count == 0)
                     return;
                 else if(path.Count > player.pmPlayer)
@@ -50,16 +51,16 @@ public class MoveToClick : MonoBehaviour
                 {
                     if(moveManager.IsCellWalkable(cell) == false)
                     {
-                        GameObject ghost = Instantiate(redGhost, new Vector3(groundTilemap.GetCellCenterWorld(cell).x,
-                        groundTilemap.GetCellCenterWorld(cell).y + ghostY, 
-                        groundTilemap.GetCellCenterWorld(cell).z), Quaternion.identity);
+                        GameObject ghost = Instantiate(redGhost, new Vector3(grid.groundTilemap.GetCellCenterWorld(cell).x,
+                        grid.groundTilemap.GetCellCenterWorld(cell).y + ghostY, 
+                        grid.groundTilemap.GetCellCenterWorld(cell).z), Quaternion.identity);
                         pathGOs.Add(ghost);
                     }
                     else if(moveManager.IsCellWalkable(cell) == true)
                     {
-                        GameObject ghost = Instantiate(greenGhost, new Vector3(groundTilemap.GetCellCenterWorld(cell).x,
-                        groundTilemap.GetCellCenterWorld(cell).y + ghostY, 
-                        groundTilemap.GetCellCenterWorld(cell).z), Quaternion.identity);
+                        GameObject ghost = Instantiate(greenGhost, new Vector3(grid.groundTilemap.GetCellCenterWorld(cell).x,
+                        grid.groundTilemap.GetCellCenterWorld(cell).y + ghostY, 
+                        grid.groundTilemap.GetCellCenterWorld(cell).z), Quaternion.identity);
                         pathGOs.Add(ghost);
                     }
                 }
@@ -83,8 +84,8 @@ public class MoveToClick : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                Vector3Int startCell = groundTilemap.WorldToCell(transform.position);
-                Vector3Int targetCell = groundTilemap.WorldToCell(hit.point);
+                Vector3Int startCell = grid.groundTilemap.WorldToCell(transform.position);
+                Vector3Int targetCell = grid.groundTilemap.WorldToCell(hit.point);
 
                 // Forcer Z = 0 pour que ça n’interfère pas
                 startCell.z = 0;
@@ -148,7 +149,7 @@ void TrySetNextTarget()
 
     pathCells.Dequeue();
 
-    currentTarget = groundTilemap.GetCellCenterWorld(nextCell);
+    currentTarget = grid.groundTilemap.GetCellCenterWorld(nextCell);
     currentTarget.y += 1f;
 
     isMoving = true;
