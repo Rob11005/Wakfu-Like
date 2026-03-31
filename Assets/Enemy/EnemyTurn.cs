@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ public class EnemyTurn : MonoBehaviour
     
     #endregion
     public Player player;
-    int speed = 3;
+    int speed = 1;
     bool canMove;
     Vector3 target;
     MoveManager moveManager;
@@ -41,32 +42,46 @@ public class EnemyTurn : MonoBehaviour
         }
         else
         {
-            MoveTowardPlayer(self, target, stat.pm_max);
+            StartCoroutine(MoveTowardPlayer(self, target, stat.pm_max));
         }
     }
-    public void MoveTowardPlayer(Vector3Int start, Vector3Int target, int pm)
+    public IEnumerator MoveTowardPlayer(Vector3Int start, Vector3Int target, int pm)
+{
+    List<Vector3Int> path = moveManager.GenerateManhattanPath(start, target);
+    pathCells.Clear();
+
+    foreach (var cell in path)
+        pathCells.Enqueue(cell);
+
+    TrySetNextTarget();
+
+    if (pathCells.Count == 0)
     {
-        List<Vector3Int> path = moveManager.GenerateManhattanPath(start, target);
-        pathCells.Clear();
-
-        foreach (var cell in path)
-        {
-            pathCells.Enqueue(cell);
-        }
-        if (pathCells.Count == 0)
-            return;
-        while(pm > 0 && pathCells.Count > 0)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, pathCells.Peek(), speed * Time.deltaTime);
-
-            if(Vector3.Distance(pathCells.Peek(), transform.position) < 0.05f)
-            {
-                pm--;
-                TrySetNextTarget();
-            }  
-        }
         enemy_Cac.turn = false;
+        yield break;
     }
+
+    while (pm > 0 && pathCells.Count > 0)
+    {
+        Vector3 nextPos = target; // ta cible courante issue de TrySetNextTarget
+
+        // Déplace vers la prochaine case
+        while (Vector3.Distance(transform.position, nextPos) >= 0.05f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, nextPos, speed * Time.deltaTime);
+            yield return null; // <-- laisse Unity render le frame
+        }
+
+        transform.position = nextPos; // snap propre sur la case
+        pm--;
+        TrySetNextTarget();
+
+        if (pathCells.Count > 0)
+            nextPos = target;
+    }
+
+    enemy_Cac.turn = false;
+}
 
     public void Action()
     {
@@ -86,6 +101,6 @@ public class EnemyTurn : MonoBehaviour
     pathCells.Dequeue();
 
     target = GridManager.Instance.groundTilemap.CellToWorld(nextCell);
-    target.y += 1f;
+    target.z += 2f;
 }
 }

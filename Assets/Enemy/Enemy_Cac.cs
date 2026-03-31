@@ -10,7 +10,7 @@ public class Enemy_Cac : MonoBehaviour
     void Start()
     {
         grid = GridManager.Instance;
-        enemyTurn = EnemyTurn.Instance;
+        enemyTurn = GetComponent<EnemyTurn>();
         if (enemyTurn == null)
             Debug.LogError("EnemyTurn.Instance est NULL");
     }
