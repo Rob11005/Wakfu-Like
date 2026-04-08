@@ -1,27 +1,16 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 public class MoveManager : MonoBehaviour
 {
-    #region Singleton
-    private static MoveManager _instance = null;
+    private GridManager grid;
 
-    public static MoveManager Instance => _instance;
-
-    public void Awake()
+    public void Start()
     {
-        if (_instance != null && _instance != this)
-        {
-            Destroy(this.gameObject);
-            return;
-        }
-        else
-        {
-            _instance = this;
-        }
+        grid = GetComponent<GridManager>();
     }
 
-    #endregion
 
 
     public List<Vector3Int> GenerateManhattanPath(Vector3Int start, Vector3Int target)
@@ -52,14 +41,44 @@ public class MoveManager : MonoBehaviour
         return path;
     }
 
+    List<Node> GetNeighbors(Node node)
+    {
+        List<Node> neighbors = new List<Node>();
+
+        Vector3Int[] directions =
+        {
+            Vector3Int.right, Vector3Int.down, Vector3Int.up, Vector3Int.left
+        };
+
+        foreach(var dir in directions)
+        {
+            Vector3Int neighborPos = node.position + dir;
+            if (IsCellWalkable(neighborPos))
+                neighbors.Add(new Node(neighborPos));
+        }
+        return neighbors;
+    }
+    private int CalculateHeuristic(Vector3Int a, Vector3Int b)
+    {
+        return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y);
+    }
+
     public bool IsCellWalkable(Vector3Int cell)
     {
-        if (!GridManager.Instance.groundTilemap.HasTile(cell))
+        if (!grid.groundTilemap.HasTile(cell))
             return false;
 
-        if (GridManager.Instance.obstacleTilemap != null && GridManager.Instance.obstacleTilemap.HasTile(cell))
+        if (grid.obstacleTilemap != null && grid.obstacleTilemap.HasTile(cell))
+            return false;
+
+        if(grid.occupiedCells != null && grid.occupiedCells.ContainsKey(cell))
             return false;
 
         return true;
     }
+
+    // private List<Vector3Int> ReconstructPath(Node endNode)
+    // {
+        
+    // }
 }

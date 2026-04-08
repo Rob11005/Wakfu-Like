@@ -10,8 +10,8 @@ public class MoveToClick : MonoBehaviour
 {
     [SerializeField] private GameObject redGhost;
     [SerializeField] private GameObject greenGhost;
-    private MoveManager moveManager;
-    private GridManager grid;
+    [SerializeField]private MoveManager moveManager;
+    [SerializeField]private GridManager grid;
     public float moveSpeed = 5f;
     List<GameObject> pathGOs = new List<GameObject>();
     private Queue<Vector3> pathWorldPositions = new Queue<Vector3>();
@@ -26,8 +26,6 @@ public class MoveToClick : MonoBehaviour
     void Start()
     {
         player = GetComponent<Player>(); 
-        grid = GridManager.Instance;
-        moveManager = MoveManager.Instance; 
     }
     void Update()
     {
@@ -39,7 +37,7 @@ public class MoveToClick : MonoBehaviour
             {
                 Destroy(pathGOs[i]);
             }
-            selectedCell = GridManager.Instance.groundTilemap.WorldToCell(hit.point);
+            selectedCell = grid.groundTilemap.WorldToCell(hit.point);
             List<Vector3Int> path = moveManager.GenerateManhattanPath(grid.groundTilemap.WorldToCell(transform.position), selectedCell);
                 if (path.Count == 0)
                     return;

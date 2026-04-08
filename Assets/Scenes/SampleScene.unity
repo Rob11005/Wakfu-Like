@@ -256,6 +256,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 117238867}
+  moveManager: {fileID: 565036680}
+  grid: {fileID: 565036681}
 --- !u!114 &117238867 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8422174124475330616, guid: 5828838e2a10d6e42854d494ffa14bde, type: 3}
@@ -754,7 +756,7 @@ GameObject:
   - component: {fileID: 565036680}
   - component: {fileID: 565036681}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: Managers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7773,6 +7775,10 @@ PrefabInstance:
       propertyPath: m_IsKinematic
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4691899186960693674, guid: 5828838e2a10d6e42854d494ffa14bde, type: 3}
+      propertyPath: grid
+      value: 
+      objectReference: {fileID: 565036681}
     - target: {fileID: 4691899186960693674, guid: 5828838e2a10d6e42854d494ffa14bde, type: 3}
       propertyPath: ghostY
       value: -0.046

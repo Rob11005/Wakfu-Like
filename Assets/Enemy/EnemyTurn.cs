@@ -4,34 +4,23 @@ using UnityEngine;
 
 public class EnemyTurn : MonoBehaviour
 {
-    #region Singleton
-    private static EnemyTurn _instance = null;
-    public static EnemyTurn Instance => _instance;
-    void Start()
-    {
-        if (_instance != null && _instance != this)
-        {
-            Destroy(this.gameObject);
-            return;
-        }
-        else
-        {
-            _instance = this;
-        }
-        player = Player.Instance;
-        moveManager = MoveManager.Instance;
-        enemy_Cac = GetComponent<Enemy_Cac>();
-    }
     
-    #endregion
     public Player player;
     int speed = 1;
     bool canMove;
     Vector3 target;
-    MoveManager moveManager;
+    [SerializeField] private MoveManager moveManager;
+    [SerializeField] private GridManager grid;
     Queue<Vector3Int> pathCells = new Queue<Vector3Int>();
     Enemy_Cac enemy_Cac;
 
+    void Awake()
+    {
+        player = Player.Instance;
+        grid = GridManager.Instance;
+        enemy_Cac = GetComponent<Enemy_Cac>();
+    }
+    
     
     public void TurnManager(Vector3Int self, Vector3Int target, EnemyStat stat)
     {
@@ -100,7 +89,7 @@ public class EnemyTurn : MonoBehaviour
 
     pathCells.Dequeue();
 
-    target = GridManager.Instance.groundTilemap.CellToWorld(nextCell);
+    target = grid.groundTilemap.CellToWorld(nextCell);
     target.z += 2f;
 }
 }
