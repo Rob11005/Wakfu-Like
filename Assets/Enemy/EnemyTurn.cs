@@ -36,7 +36,7 @@ public class EnemyTurn : MonoBehaviour
     }
     public IEnumerator MoveTowardPlayer(Vector3Int start, Vector3Int target, int pm)
 {
-    List<Vector3Int> path = moveManager.GenerateManhattanPath(start, target);
+    List<Vector3Int> path = moveManager.FindPath(start, target);
     pathCells.Clear();
 
     foreach (var cell in path)

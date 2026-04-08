@@ -8,15 +8,19 @@ public class GameManager : MonoBehaviour
     private int turnCount;
     public TextMeshProUGUI turnText;
     public TextMeshProUGUI hpText;
+    void Start()
+    {
+        player = Player.Instance;
+    }
     void Update()
     {
         turnText.text = turnCount.ToString();
-        hpText.text = player.hpPlayer.ToString();
+        hpText.text = player.stats.hp_current.ToString();
     }
 
     public void NextTurn()
     {
-        player.pmPlayer = player.maxPM_player;
+        player.stats.pm_current = player.stats.pm_max;
         turnCount++;
         enemy_Cac.turn = true;
     }

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 public class MoveManager : MonoBehaviour
@@ -11,34 +13,55 @@ public class MoveManager : MonoBehaviour
         grid = GetComponent<GridManager>();
     }
 
-
-
-    public List<Vector3Int> GenerateManhattanPath(Vector3Int start, Vector3Int target)
+    public List<Vector3Int> FindPath(Vector3Int start, Vector3Int target)
     {
-        List<Vector3Int> path = new List<Vector3Int>();
-        Vector3Int current = start;
+        List<Node> OpenList = new List<Node>();
+        List<Node> ClosedList = new List<Node>();
 
-        while (current.x != target.x || current.y != target.y)
+        Node currentNode = new Node(start);
+
+        currentNode.h = CalculateHeuristic(start, target);
+        currentNode.f = currentNode.h;
+        OpenList.Add(currentNode);
+
+        while(OpenList.Count > 0)
         {
-            int dx = target.x - current.x;
-            int dy = target.y - current.y;
+            currentNode = OpenList.OrderBy(n => n.f).ThenBy(n => n.h).First();
+            OpenList.Remove(currentNode);
+            ClosedList.Add(currentNode);
 
-            Vector3Int next = current;
+            if(currentNode.position == target)
+            {
+                return ReconstructPath(currentNode);
+            }
 
-
-            if (Mathf.Abs(dx) >= Mathf.Abs(dy) && dx != 0)
-                next.x += dx > 0 ? 1 : -1;
-            else if (dy != 0)
-                next.y += dy > 0 ? 1 : -1;
-
-            next.z = 0;
-                
-
-            current = next;
-            path.Add(current);
+            foreach(Node node in GetNeighbors(currentNode))
+            {  
+                if(!ClosedList.Any(n => n.position == node.position))
+                {
+                    node.g = currentNode.g + 1;
+                    node.h = CalculateHeuristic(node.position, target);
+                    node.f = node.g + node.h;
+                    node.parent = currentNode;
+                    if(OpenList.Any(n => n.position == node.position))
+                    {
+                        Node n = OpenList.Find(n => n.position == node.position);
+                        if(n.g > node.g)
+                        {
+                            n.g = node.g;
+                            n.f = node.g + n.h;
+                            n.parent = currentNode;
+                        }
+                    }
+                    else
+                        OpenList.Add(node);
+                }
+            }
         }
-
-        return path;
+        Debug.Log("Start : " + start + " | Target : " + target);
+        Debug.Log("Voisins du départ : " + GetNeighbors(new Node(start)).Count);
+        Debug.Log("groundTilemap has tile at start : " + grid.groundTilemap.HasTile(start));
+        return new List<Vector3Int>();
     }
 
     List<Node> GetNeighbors(Node node)
@@ -53,6 +76,7 @@ public class MoveManager : MonoBehaviour
         foreach(var dir in directions)
         {
             Vector3Int neighborPos = node.position + dir;
+            neighborPos.z = 0;
             if (IsCellWalkable(neighborPos))
                 neighbors.Add(new Node(neighborPos));
         }
@@ -77,8 +101,19 @@ public class MoveManager : MonoBehaviour
         return true;
     }
 
-    // private List<Vector3Int> ReconstructPath(Node endNode)
-    // {
-        
-    // }
+    private List<Vector3Int> ReconstructPath(Node endNode)
+    {
+        List<Vector3Int> path = new List<Vector3Int>();
+        Node n = endNode;
+
+        while(n != null)
+        {
+            path.Add(n.position);
+            n = n.parent;
+        }
+
+        path.Reverse();
+        path.RemoveAt(0);
+        return path;
+    }
 }

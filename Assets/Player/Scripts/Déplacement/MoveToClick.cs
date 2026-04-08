@@ -19,13 +19,13 @@ public class MoveToClick : MonoBehaviour
     private Vector3 currentTarget;
     Vector3Int selectedCell;
     private bool isMoving;
-    private Player player;
+    private PlayerStat playerStats;
     [SerializeField] [Range(-1, 0)] private float ghostY;
 
 
     void Start()
     {
-        player = GetComponent<Player>(); 
+        playerStats = GetComponent<PlayerStat>(); 
     }
     void Update()
     {
@@ -38,10 +38,11 @@ public class MoveToClick : MonoBehaviour
                 Destroy(pathGOs[i]);
             }
             selectedCell = grid.groundTilemap.WorldToCell(hit.point);
-            List<Vector3Int> path = moveManager.GenerateManhattanPath(grid.groundTilemap.WorldToCell(transform.position), selectedCell);
+            selectedCell.z = 0;
+            List<Vector3Int> path = moveManager.FindPath(grid.groundTilemap.WorldToCell(transform.position), selectedCell);
                 if (path.Count == 0)
                     return;
-                else if(path.Count > player.pmPlayer)
+                else if(path.Count > playerStats.pm_current)
                     return;
                 else
             {
@@ -85,19 +86,15 @@ public class MoveToClick : MonoBehaviour
                 Vector3Int startCell = grid.groundTilemap.WorldToCell(transform.position);
                 Vector3Int targetCell = grid.groundTilemap.WorldToCell(hit.point);
 
-                // Forcer Z = 0 pour que ça n’interfère pas
                 startCell.z = 0;
                 targetCell.z = 0;
 
-                
 
-                if (!moveManager.IsCellWalkable(targetCell))
-                    return;
-
-                List<Vector3Int> path = moveManager.GenerateManhattanPath(startCell, targetCell);
+                List<Vector3Int> path = moveManager.FindPath(startCell, targetCell);
+                Debug.Log("Taille du chemin : " + path.Count + " | PM joueur : " + playerStats.pm_current);
                 if (path.Count == 0)
                     return;
-                if(path.Count > player.pmPlayer)
+                if(path.Count > playerStats.pm_current)
                     return;
 
                 pathWorldPositions.Clear();
@@ -124,13 +121,13 @@ public class MoveToClick : MonoBehaviour
 
     if (Vector3.Distance(transform.position, currentTarget) < 0.05f)
     {
-        player.pmPlayer--;
+        playerStats.pm_current--;
         TrySetNextTarget();
     }
 }
 void TrySetNextTarget()
 {
-    if (pathCells.Count == 0 || player.pmPlayer <= 0)
+    if (pathCells.Count == 0 || playerStats.pm_current <= 0)
     {
         isMoving = false;
         return;

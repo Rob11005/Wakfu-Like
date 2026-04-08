@@ -5,6 +5,8 @@ public class Player : MonoBehaviour
 {
     private static Player _instance = null;
     public static Player Instance => _instance;
+    public PlayerStat stats;
+
     void Awake()
     {
         if (_instance != null && _instance != this)
@@ -16,16 +18,11 @@ public class Player : MonoBehaviour
         {
             _instance = this;
         }
+        stats = GetComponent<PlayerStat>();
     }
-    public int pmPlayer;
-    public int maxPM_player = 6;
-    public int initiative;
-    public int hpPlayer;
-    public int maxHP_player = 50;
 
     void Start()
     {
-        pmPlayer = maxPM_player;
-        hpPlayer = maxHP_player;
+        stats.pm_current = stats.pm_max;
     }
 }
