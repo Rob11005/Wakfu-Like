@@ -1,95 +1,142 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyTurn : MonoBehaviour
 {
-    
+    public bool turn;
     public Player player;
     int speed = 1;
-    bool canMove;
-    Vector3 target;
+    bool isMoving = false;
+    float distance;
+    public float moveSpeed;
+    Vector3 currentTarget;
     [SerializeField] private MoveManager moveManager;
     [SerializeField] private GridManager grid;
     Queue<Vector3Int> pathCells = new Queue<Vector3Int>();
-    Enemy_Cac enemy_Cac;
+    EnemyStat stats;
 
-    void Awake()
+    void Start()
     {
         player = Player.Instance;
         grid = GridManager.Instance;
-        enemy_Cac = GetComponent<Enemy_Cac>();
+        stats = GetComponent<EnemyStat>();
+        grid.occupiedCells.Add(grid.groundTilemap.WorldToCell(transform.position), stats);
     }
-    
-    
-    public void TurnManager(Vector3Int self, Vector3Int target, EnemyStat stat)
+    void Update()
     {
-        float distance = Vector3Int.Distance(target, self);
-        if(distance < stat.actionRange)
+            
+        if(!turn) return;  // ← stoppe tout si ce n'est pas son tour
+
+        if(isMoving)
+        {
+            MoveTowardPlayer();
+        }
+            else
+            {
+                EndTurn();
+            }
+    
+    }
+        public void StartTurn()
+    {
+        stats.pm_current = stats.pm_max;
+        stats.pa_current = stats.pa_max;
+        turn = true;
+        TurnManager(stats.pm_current);
+    }
+
+    public void EndTurn()
+    {
+        turn = false;
+        GameManager.Instance.PlayNextEnemy();
+    }
+
+    #region Action&Movement
+    
+    public void TurnManager(int pm_current)
+    {
+        
+        Vector3Int self = grid.groundTilemap.WorldToCell(transform.position);
+        Vector3Int target = grid.groundTilemap.WorldToCell(player.transform.position);
+        distance = Vector3Int.Distance(target, self);
+        Debug.Log(distance);
+        self.z = 0;
+        target.z = 0;
+        if(stats.actionRange > distance &&  stats.pa_current > 0)
         {
             Action();
         }
         else
         {
-            StartCoroutine(MoveTowardPlayer(self, target, stat.pm_max));
+            List<Vector3Int> path = moveManager.FindPath(self, target);
+
+        pathCells.Clear();
+
+        foreach (var cell in path)
+                {
+                    if(pm_current > 0)
+                    {
+                        pathCells.Enqueue(cell);
+                        stats.pm_current--;
+                    }
+                    else
+                        return;
+                }
+        grid.occupiedCells.Remove(grid.groundTilemap.WorldToCell(transform.position));
+        SetNextTarget();
         }
+        
     }
-    public IEnumerator MoveTowardPlayer(Vector3Int start, Vector3Int target, int pm)
+
+    private void MoveTowardPlayer()
 {
-    List<Vector3Int> path = moveManager.FindPath(start, target);
-    pathCells.Clear();
+    transform.position = Vector3.MoveTowards(
+        transform.position,
+        currentTarget,
+        moveSpeed * Time.deltaTime
+    );
 
-    foreach (var cell in path)
-        pathCells.Enqueue(cell);
-
-    TrySetNextTarget();
-
-    if (pathCells.Count == 0)
+    if (Vector3.Distance(transform.position, currentTarget) < 0.05f)
     {
-        enemy_Cac.turn = false;
-        yield break;
+        SetNextTarget();
     }
-
-    while (pm > 0 && pathCells.Count > 0)
-    {
-        Vector3 nextPos = target; // ta cible courante issue de TrySetNextTarget
-
-        // Déplace vers la prochaine case
-        while (Vector3.Distance(transform.position, nextPos) >= 0.05f)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, nextPos, speed * Time.deltaTime);
-            yield return null; // <-- laisse Unity render le frame
-        }
-
-        transform.position = nextPos; // snap propre sur la case
-        pm--;
-        TrySetNextTarget();
-
-        if (pathCells.Count > 0)
-            nextPos = target;
-    }
-
-    enemy_Cac.turn = false;
 }
 
     public void Action()
     {
-        
+        stats.pa_current -= 2;
+        Debug.Log("Action");
     }
 
-    void TrySetNextTarget()
+    void SetNextTarget()
 {
-    Vector3Int nextCell = pathCells.Peek();
-
-    if (!moveManager.IsCellWalkable(nextCell))
+    if (pathCells.Count == 0 || stats.pm_current <= 0)
     {
-        pathCells.Clear();
+        isMoving = false;
+        grid.occupiedCells.Add(grid.groundTilemap.WorldToCell(transform.position), stats);  
         return;
     }
 
+    Vector3Int nextCell = pathCells.Peek();
+
     pathCells.Dequeue();
 
-    target = grid.groundTilemap.CellToWorld(nextCell);
-    target.z += 2f;
+    currentTarget = grid.groundTilemap.GetCellCenterWorld(nextCell);
+    currentTarget.y += 1f;
+
+    isMoving = true;
 }
+#endregion
+
+ private bool CanPlay()
+    {
+        if(stats.pa_current > 0)
+        return true;
+        else if(stats.pm_current > 0)
+        return true;
+        else
+        return false;
+    }
 }

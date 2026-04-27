@@ -131,8 +131,10 @@ GameObject:
   - component: {fileID: 45146101}
   - component: {fileID: 45146100}
   - component: {fileID: 45146099}
-  - component: {fileID: 45146103}
   - component: {fileID: 45146104}
+  - component: {fileID: 45146105}
+  - component: {fileID: 45146106}
+  - component: {fileID: 45146107}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -155,7 +157,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -229,20 +231,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &45146103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 45146098}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d8a48d19bb4da04d9272a49522a23fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stat: {fileID: 11400000, guid: e729b71522269ee46aa36da22fc60388, type: 2}
-  turn: 0
 --- !u!114 &45146104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,9 +243,71 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2a6f550d3254364f9ae7eec2c69281d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turn: 0
   player: {fileID: 117238867}
+  moveSpeed: 5
   moveManager: {fileID: 565036680}
   grid: {fileID: 565036681}
+--- !u!114 &45146105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 45146098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36a82e5d40704cd408c7bf3445f54e17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp_max: 10
+  hp_current: 0
+  pm_max: 4
+  pm_current: 0
+  pa_max: 6
+  pa_current: 0
+  initiative: 5
+  actionRange: 3
+--- !u!114 &45146106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 45146098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d8a48d19bb4da04d9272a49522a23fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stat: {fileID: 45146105}
+--- !u!54 &45146107
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 45146098}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!114 &117238867 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8422174124475330616, guid: 5828838e2a10d6e42854d494ffa14bde, type: 3}
@@ -790,9 +840,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 117238867}
-  enemy_Cac: {fileID: 45146103}
   turnText: {fileID: 454517231}
   hpText: {fileID: 472119789}
+  currentState: 0
+  enemies: []
 --- !u!114 &565036680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1409,7 +1460,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 565036679}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: NextTurn
+        m_MethodName: OnEndTurnButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1476,7 +1527,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp_max: 50
   hp_current: 0
-  pm_max: 10
+  pm_max: 6
   pm_current: 0
   pa_max: 6
   pa_current: 0

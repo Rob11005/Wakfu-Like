@@ -25,7 +25,8 @@ public class MoveToClick : MonoBehaviour
 
     void Start()
     {
-        playerStats = GetComponent<PlayerStat>(); 
+        playerStats = GetComponent<PlayerStat>();
+        grid.occupiedCells.Add(grid.groundTilemap.WorldToCell(transform.position), playerStats); 
     }
     void Update()
     {
@@ -66,6 +67,7 @@ public class MoveToClick : MonoBehaviour
             }
         }
 
+        //Manager de mouvement 
         if (!isMoving)
         {
             HandleClick();
@@ -80,6 +82,11 @@ public class MoveToClick : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            for(int i = 0; i < pathGOs.Count; i++)
+            {
+                Destroy(pathGOs[i]);
+            }
+            pathGOs.Clear();
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
@@ -91,7 +98,6 @@ public class MoveToClick : MonoBehaviour
 
 
                 List<Vector3Int> path = moveManager.FindPath(startCell, targetCell);
-                Debug.Log("Taille du chemin : " + path.Count + " | PM joueur : " + playerStats.pm_current);
                 if (path.Count == 0)
                     return;
                 if(path.Count > playerStats.pm_current)
@@ -100,20 +106,20 @@ public class MoveToClick : MonoBehaviour
                 pathWorldPositions.Clear();
 
                 pathCells.Clear();
-
+                grid.occupiedCells.Remove(grid.groundTilemap.WorldToCell(transform.position));
                 foreach (var cell in path)
                 {
                     pathCells.Enqueue(cell);
                 }
-
-                TrySetNextTarget();
-                            }
-                        }
-                    }
+                
+                SetNextTarget();
+                }
+            }
+    }
 
     void MovePlayer()
-{
-    transform.position = Vector3.MoveTowards(
+    {
+        transform.position = Vector3.MoveTowards(
         transform.position,
         currentTarget,
         moveSpeed * Time.deltaTime
@@ -122,25 +128,19 @@ public class MoveToClick : MonoBehaviour
     if (Vector3.Distance(transform.position, currentTarget) < 0.05f)
     {
         playerStats.pm_current--;
-        TrySetNextTarget();
+        SetNextTarget();
     }
 }
-void TrySetNextTarget()
+void SetNextTarget()
 {
     if (pathCells.Count == 0 || playerStats.pm_current <= 0)
     {
         isMoving = false;
+        grid.occupiedCells.Add(grid.groundTilemap.WorldToCell(transform.position), playerStats);
         return;
     }
 
     Vector3Int nextCell = pathCells.Peek();
-
-    if (!moveManager.IsCellWalkable(nextCell))
-    {
-        pathCells.Clear();
-        isMoving = false;
-        return;
-    }
 
     pathCells.Dequeue();
 

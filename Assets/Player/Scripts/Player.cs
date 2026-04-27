@@ -23,6 +23,6 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        stats.pm_current = stats.pm_max;
+        
     }
 }

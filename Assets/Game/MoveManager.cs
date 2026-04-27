@@ -58,9 +58,9 @@ public class MoveManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Start : " + start + " | Target : " + target);
-        Debug.Log("Voisins du départ : " + GetNeighbors(new Node(start)).Count);
-        Debug.Log("groundTilemap has tile at start : " + grid.groundTilemap.HasTile(start));
+        // Debug.Log("Start : " + start + " | Target : " + target);
+        // Debug.Log("Voisins du départ : " + GetNeighbors(new Node(start)).Count);
+        // Debug.Log("groundTilemap has tile at start : " + grid.groundTilemap.HasTile(start));
         return new List<Vector3Int>();
     }
 
