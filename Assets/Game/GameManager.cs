@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
     {
         currentState = TurnState.PlayerTurn;
         player.stats.ResetStats();
+        Debug.Log(currentState);
     }
 
     public void StartEnemyTurn()
